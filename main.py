@@ -109,7 +109,6 @@ class PrintReport(object):
             pass
         else:
             currentTime = int(time.time())
-            uniqueDomains = 0 #to store a count of number of unique domains in last 5 minutes
             tempDomainRecord = {} #to store domains of last 5 minutes
             for domain in list(domains):
                 domainCount = 0
@@ -119,10 +118,9 @@ class PrintReport(object):
                     else:
                         domains[domain].remove(entry) #removing older entries
                     if domainCount != 0:
-                        uniqueDomains += 1
                         tempDomainRecord[domain] = domainCount
             print("--------------------------------------------------------------------------")
-            print("TOTAL UNIQUE DOMAINS = ",uniqueDomains)
+            print("TOTAL UNIQUE DOMAINS = ",len(tempDomainRecord))
             print("\n")
             #Printing domains in sorted order
             sorted_domains = sorted(((count,domain_name) for domain_name,count in tempDomainRecord.items()), reverse=True)
