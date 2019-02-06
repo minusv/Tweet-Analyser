@@ -1,10 +1,10 @@
 # Tweet-Analyser
-Tweepy to track a given keyword and generate various reports about the tweets. 
+Tweet-Analyser to track a given keyword and generate various reports about the tweets. 
 
 ## Input
 Keyword 
 ## Output
-After starting, every 1 minute, program prints following reports based on the tweets received in last 1 minute.
+After starting, every 1 minute, program prints following reports based on the tweets received in last 'n' minutes.
 #### User Report
 Names of all Twitter users who tweeted with given keyword along with the count of tweets from them.
 #### Links Report
