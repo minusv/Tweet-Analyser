@@ -1,5 +1,5 @@
 # Tweet-Analyser
-Tweepy to track a given keyword and generate various reports about the tweets. 
+Tweet-Analyser to track a given keyword and generate various reports about the tweets. 
 
 ## Input
 Keyword 
