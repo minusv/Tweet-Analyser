@@ -151,6 +151,12 @@ if __name__ == "__main__":
     try:
         stream = tweepy.Stream(auth=api.auth, listener=stream_listener) #starting twitter stream
         stream.filter(track=[keyword],languages=["en"])
+
+    except KeyboardInterrupt:
+            #terminating program on keyboard interrupt
+            print("Terminating!")
+            sys.exit()
+            
     except Exception as ex:
         print("ERROR:", ex.__class__.__name__)
         print("Terminating!")
