@@ -16,8 +16,8 @@ api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 # wait_on_rate_limit= True;  will make the api to automatically wait for rate limits to replenish
 # wait_on_rate_limit_notify= True;  will make the api  to print a notification when Tweepy is waiting for rate limits to replenish
 
-users = defaultdict(int) #to store user report
-domains = defaultdict(int) #to store link report
+users = defaultdict(list) #to store user report
+domains = defaultdict(list) #to store link report
 
 class StreamListener(tweepy.StreamListener):
 
@@ -27,7 +27,7 @@ class StreamListener(tweepy.StreamListener):
         #to add new records to user report
 
         global users
-        users[status.user.screen_name] += 1
+        users[status.user.screen_name].append(int(time.time()))
 
     def unshorten_url(self, url):
         #to unshort any url and to update link report
@@ -36,10 +36,9 @@ class StreamListener(tweepy.StreamListener):
         try:
             response = self.session.head(url, allow_redirects=True) #getting url from shortened url
             base_url = "{0.netloc}".format(urlsplit(response.url)) #getting network location
-            domains[base_url] += 1
+            domains[base_url].append(int(time.time()))
             
         except requests.exceptions.InvalidURL:
-            #for invalid urls
             pass
 
         except KeyboardInterrupt:
@@ -85,40 +84,64 @@ class PrintReport(object):
 
     def generate_user_report(self):
         #Printing user report
-
         global users
         if users == {}:
-            print("\nUser Report will be generated shortly!", end=" ")
+            pass
         else:
             print("=========================================================================")
             print("USER_NAME \t\t NO_OF_TWEETS\n")
+            currentTime = int(time.time())
             for user in list(users):
-                print("{}\t\t{}".format(user,users[user]))
+                userCount = 0
+                for entry in users[user]:
+                    if currentTime - entry <= 300: #checking if an entry was made less than or equal to 5 min ago.
+                        userCount += 1
+                    else:
+                        users[user].remove(entry) #removing older entries
+                if userCount != 0:
+                    print("{}\t\t{}".format(user,userCount))
         print("\n")
 
     def generate_link_report(self):
         #Printing link report
-
         global domains
         if domains == {}:
-            print("Link Report will be generated shortly!")
+            pass
         else:
+            currentTime = int(time.time())
+            uniqueDomains = 0 #to store a count of number of unique domains in last 5 minutes
+            tempDomainRecord = {} #to store domains of last 5 minutes
+            for domain in list(domains):
+                domainCount = 0
+                for entry in domains[domain]:
+                    if currentTime - entry <= 300: #checking if an entry was made less than or equal to 5 min ago.
+                        domainCount += 1
+                    else:
+                        domains[domain].remove(entry) #removing older entries
+                    if domainCount != 0:
+                        uniqueDomains += 1
+                        tempDomainRecord[domain] = domainCount
             print("--------------------------------------------------------------------------")
-            print("TOTAL UNIQUE DOMAINS = ",len(domains))
+            print("TOTAL UNIQUE DOMAINS = ",uniqueDomains)
             print("\n")
-            sorted_domains = sorted(((count,domain_name) for domain_name,count in domains.items()), reverse=True)
+            #Printing domains in sorted order
+            sorted_domains = sorted(((count,domain_name) for domain_name,count in tempDomainRecord.items()), reverse=True)
             for domain in sorted_domains:
                 print(domain)
+
         print("=========================================================================")
 
 
     def run(self):
         #Running thread
-        while True:
+        while(True):
             self.generate_user_report()
             self.generate_link_report()
             time.sleep(self.interval) #thread will sleep for 60s
-    
+
+        print("Task Completed!")
+        sys.exit()
+
 #===========================================MAIN=================================================
 if __name__ == "__main__":
 
