@@ -1,11 +1,11 @@
-import tweepy, re, requests, sys, threading, time
+import tweepy, re, requests, sys, threading, time, os
 from collections import defaultdict
 from urllib.parse import urlsplit
 
-CONSUMER_KEY = "w7mLMuaqhImPH2AbHiW596lT4"
-CONSUMER_SECRET = "uYAHdGhYFTwMDRXj7wTdlkCx87iFWzavVm0O1DZaniHAjKkqtx"
-ACCESS_TOKEN = "1044217500525895680-1TE2u4GUr72MxLWDm1IWt41X4JK1ma"
-ACCESS_TOKEN_SECRET = "RFxeEi6zLmQTFOhJ0HIYp3MK49B39MmJkk69Dvg9Lt3Eg"
+CONSUMER_KEY = os.environ['CONSUMER_KEY']
+CONSUMER_SECRET = os.environ['CONSUMER_SECRET']
+ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
+ACCESS_TOKEN_SECRET = os.environ['ACCESS_TOKEN_SECRET']
 
 # Setup tweepy to authenticate with Twitter credentials:
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
